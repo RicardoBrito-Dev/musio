@@ -30,6 +30,16 @@ export function TrackRow({ track }: TrackRowProps) {
       setIsLiked(liked);
     }
     checkLike();
+
+    const handleLikeEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<{ trackId: string; liked: boolean }>;
+      if (customEvent.detail.trackId === track.id) {
+        setIsLiked(customEvent.detail.liked);
+        setLikeCount((prev) => (customEvent.detail.liked ? prev + 1 : Math.max(0, prev - 1)));
+      }
+    };
+    window.addEventListener('musio:like-changed', handleLikeEvent);
+    return () => window.removeEventListener('musio:like-changed', handleLikeEvent);
   }, [track.id, user?.id]);
 
   const handlePlayClick = () => {

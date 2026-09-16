@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useRef, useEffect, useCallb
 import { PlayerTrack } from '@/types/music.types';
 import { playService } from '@/services/play.service';
 import { likeService } from '@/services/like.service';
+import { useAuth } from '@/contexts/auth-context';
 
 interface PlayerContextType {
   currentTrack: PlayerTrack | null;
@@ -27,6 +28,7 @@ interface PlayerContextType {
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
   const [currentTrack, setCurrentTrack] = useState<PlayerTrack | null>(null);
   const [queue, setQueue] = useState<PlayerTrack[]>([]);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -40,12 +42,24 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const nextTrackRef = useRef<() => void>(() => {});
   const playRecordedRef = useRef<boolean>(false);
 
+  // Sincroniza estado de like com eventos de outras partes da UI
+  useEffect(() => {
+    const handleLikeChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ trackId: string; liked: boolean }>;
+      if (currentTrack && customEvent.detail.trackId === currentTrack.id) {
+        setIsCurrentLiked(customEvent.detail.liked);
+      }
+    };
+    window.addEventListener('musio:like-changed', handleLikeChange);
+    return () => window.removeEventListener('musio:like-changed', handleLikeChange);
+  }, [currentTrack]);
+
   const playTrack = useCallback((track: PlayerTrack, newQueue?: PlayerTrack[]) => {
     setCurrentTrack(track);
     playRecordedRef.current = false;
 
     // Checar se a faixa já é favoritada
-    likeService.isLiked('guest', track.id).then(setIsCurrentLiked);
+    likeService.isLiked(user?.id || 'guest', track.id).then(setIsCurrentLiked);
 
     if (newQueue) {
       setQueue(newQueue);
@@ -66,7 +80,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         console.warn('Auto-play bloqueado ou falha de áudio:', err);
       });
     }
-  }, []);
+  }, [user?.id]);
 
   const nextTrack = useCallback(() => {
     if (!currentTrack || queue.length === 0) return;
@@ -173,9 +187,9 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
   const toggleCurrentLike = useCallback(async () => {
     if (!currentTrack) return;
-    const result = await likeService.toggleLike('guest', currentTrack.id);
+    const result = await likeService.toggleLike(user?.id || 'guest', currentTrack.id);
     setIsCurrentLiked(result.liked);
-  }, [currentTrack]);
+  }, [currentTrack, user?.id]);
 
   return (
     <PlayerContext.Provider

@@ -30,6 +30,19 @@ export default function FavoritesPage() {
     }
 
     loadFavorites();
+
+    const handleLikeEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<{ trackId: string; liked: boolean }>;
+      if (!customEvent.detail.liked) {
+        setTracks((prev) => prev.filter((t) => t.id !== customEvent.detail.trackId));
+      } else {
+        // Recarrega se curtido novamente
+        likeService.getUserLikedTracks(user?.id || 'guest').then(setTracks);
+      }
+    };
+
+    window.addEventListener('musio:like-changed', handleLikeEvent);
+    return () => window.removeEventListener('musio:like-changed', handleLikeEvent);
   }, [user]);
 
   const handlePlayAll = () => {
