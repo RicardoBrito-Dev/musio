@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useRef, useEffect, useCallback } from 'react';
 import { PlayerTrack } from '@/types/music.types';
+import { playService } from '@/services/play.service';
+import { likeService } from '@/services/like.service';
 
 interface PlayerContextType {
   currentTrack: PlayerTrack | null;
@@ -11,6 +13,7 @@ interface PlayerContextType {
   duration: number;
   volume: number;
   isMuted: boolean;
+  isCurrentLiked: boolean;
   playTrack: (track: PlayerTrack, newQueue?: PlayerTrack[]) => void;
   togglePlay: () => void;
   nextTrack: () => void;
@@ -18,6 +21,7 @@ interface PlayerContextType {
   seek: (timeSeconds: number) => void;
   setVolume: (vol: number) => void;
   toggleMute: () => void;
+  toggleCurrentLike: () => Promise<void>;
 }
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -30,12 +34,19 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [duration, setDuration] = useState<number>(0);
   const [volume, setVolumeState] = useState<number>(0.8);
   const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [isCurrentLiked, setIsCurrentLiked] = useState<boolean>(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const nextTrackRef = useRef<() => void>(() => {});
+  const playRecordedRef = useRef<boolean>(false);
 
   const playTrack = useCallback((track: PlayerTrack, newQueue?: PlayerTrack[]) => {
     setCurrentTrack(track);
+    playRecordedRef.current = false;
+
+    // Checar se a faixa já é favoritada
+    likeService.isLiked('guest', track.id).then(setIsCurrentLiked);
+
     if (newQueue) {
       setQueue(newQueue);
     } else {
@@ -67,7 +78,6 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [currentTrack, queue, playTrack]);
 
-  // Mantém nextTrackRef sempre atualizado
   useEffect(() => {
     nextTrackRef.current = nextTrack;
   }, [nextTrack]);
@@ -79,6 +89,12 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
     const handleTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
+
+      // Computa play automático quando passar de 10s de reprodução
+      if (audio.currentTime >= 10 && !playRecordedRef.current && currentTrack?.id) {
+        playRecordedRef.current = true;
+        playService.recordPlay(currentTrack.id, Math.round(audio.currentTime));
+      }
     };
 
     const handleLoadedMetadata = () => {
@@ -99,7 +115,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       audio.removeEventListener('ended', handleEnded);
       audio.pause();
     };
-  }, []);
+  }, [currentTrack?.id]);
 
   const togglePlay = useCallback(() => {
     if (!audioRef.current || !currentTrack) return;
@@ -155,6 +171,12 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isMuted, volume]);
 
+  const toggleCurrentLike = useCallback(async () => {
+    if (!currentTrack) return;
+    const result = await likeService.toggleLike('guest', currentTrack.id);
+    setIsCurrentLiked(result.liked);
+  }, [currentTrack]);
+
   return (
     <PlayerContext.Provider
       value={{
@@ -165,6 +187,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         duration: duration || currentTrack?.durationSeconds || 0,
         volume,
         isMuted,
+        isCurrentLiked,
         playTrack,
         togglePlay,
         nextTrack,
@@ -172,6 +195,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         seek,
         setVolume,
         toggleMute,
+        toggleCurrentLike,
       }}
     >
       {children}

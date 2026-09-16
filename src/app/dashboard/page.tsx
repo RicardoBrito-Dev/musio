@@ -18,26 +18,35 @@ export default async function DashboardPage() {
 
       {/* Cards de resumo rápido */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800 space-y-1">
-          <span className="text-xs text-zinc-400 font-medium flex items-center gap-1.5">
-            <Heart className="w-3.5 h-3.5 text-rose-500" /> Artistas Apoiados
-          </span>
-          <p className="text-2xl font-black text-white">2</p>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800 space-y-1">
-          <span className="text-xs text-zinc-400 font-medium flex items-center gap-1.5">
-            <Music className="w-3.5 h-3.5 text-amber-500" /> Músicas Ouvidas
-          </span>
-          <p className="text-2xl font-black text-white">48</p>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800 space-y-1">
-          <span className="text-xs text-zinc-400 font-medium flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-orange-500" /> Clubes Assinados
+        <Link
+          href="/dashboard/following"
+          className="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900 transition-all space-y-1 block group"
+        >
+          <span className="text-xs text-zinc-400 group-hover:text-zinc-300 font-medium flex items-center gap-1.5">
+            <Heart className="w-3.5 h-3.5 text-rose-500" /> Artistas que Sigo
           </span>
           <p className="text-2xl font-black text-white">1</p>
-        </div>
+        </Link>
+
+        <Link
+          href="/dashboard/favorites"
+          className="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900 transition-all space-y-1 block group"
+        >
+          <span className="text-xs text-zinc-400 group-hover:text-zinc-300 font-medium flex items-center gap-1.5">
+            <Music className="w-3.5 h-3.5 text-amber-500" /> Músicas Curtidas
+          </span>
+          <p className="text-2xl font-black text-white">1</p>
+        </Link>
+
+        <Link
+          href="/dashboard/playlists"
+          className="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900 transition-all space-y-1 block group"
+        >
+          <span className="text-xs text-zinc-400 group-hover:text-zinc-300 font-medium flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-orange-500" /> Minhas Playlists
+          </span>
+          <p className="text-2xl font-black text-white">1</p>
+        </Link>
       </div>
 
       {/* Feed de Lançamentos Recentes */}

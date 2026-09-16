@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { artistService } from '@/services/artist.service';
+import { followService } from '@/services/follow.service';
+import { useAuth } from '@/contexts/auth-context';
 import { ArtistWithDetails } from '@/types/music.types';
 import { TrackRow } from '@/components/track/track-row';
 import { SupportModal } from '@/components/artist/support-modal';
@@ -21,10 +23,12 @@ import {
 export default function ArtistProfilePage() {
   const params = useParams();
   const slug = params?.slug as string;
+  const { user } = useAuth();
 
   const [artist, setArtist] = useState<ArtistWithDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'releases' | 'exclusive' | 'club'>('releases');
 
@@ -33,11 +37,34 @@ export default function ArtistProfilePage() {
       if (slug) {
         const data = await artistService.getArtistBySlug(slug);
         setArtist(data);
+        if (data) {
+          setFollowerCount(data.follower_count || 0);
+          const following = await followService.isFollowing(user?.id || 'guest', data.id);
+          setIsFollowing(following);
+        }
         setLoading(false);
       }
     }
     loadArtist();
-  }, [slug]);
+  }, [slug, user]);
+
+  const handleToggleFollow = async () => {
+    if (!artist) return;
+    const previous = isFollowing;
+    const previousCount = followerCount;
+
+    setIsFollowing(!previous);
+    setFollowerCount(previous ? previousCount - 1 : previousCount + 1);
+
+    try {
+      const res = await followService.toggleFollow(user?.id || 'guest', artist.id);
+      setIsFollowing(res.following);
+      setFollowerCount(res.newFollowerCount);
+    } catch {
+      setIsFollowing(previous);
+      setFollowerCount(previousCount);
+    }
+  };
 
   if (loading) {
     return (
@@ -112,7 +139,7 @@ export default function ArtistProfilePage() {
                 </div>
                 <p className="text-sm text-zinc-300 max-w-xl leading-relaxed">{artist.bio}</p>
                 <div className="flex items-center gap-4 text-xs font-mono text-zinc-400 pt-1">
-                  <span>{formatCompactNumber(artist.follower_count || 0)} seguidores</span>
+                  <span>{formatCompactNumber(followerCount)} seguidores</span>
                   <span>•</span>
                   <span>{tracks.length} produções</span>
                 </div>
@@ -122,7 +149,7 @@ export default function ArtistProfilePage() {
             {/* Ações: Seguir e Apoiar */}
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <button
-                onClick={() => setIsFollowing(!isFollowing)}
+                onClick={handleToggleFollow}
                 className={`flex-1 sm:flex-initial px-5 py-2.5 rounded-2xl font-semibold text-xs transition-all flex items-center justify-center gap-2 border ${
                   isFollowing
                     ? 'bg-zinc-800 text-zinc-200 border-zinc-700'

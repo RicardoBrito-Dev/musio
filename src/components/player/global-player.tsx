@@ -14,6 +14,7 @@ import {
   ListMusic,
   Disc3,
   X,
+  Heart,
 } from 'lucide-react';
 
 export function GlobalPlayer() {
@@ -24,6 +25,7 @@ export function GlobalPlayer() {
     duration,
     volume,
     isMuted,
+    isCurrentLiked,
     queue,
     togglePlay,
     nextTrack,
@@ -31,6 +33,7 @@ export function GlobalPlayer() {
     seek,
     setVolume,
     toggleMute,
+    toggleCurrentLike,
     playTrack,
   } = usePlayer();
 
@@ -90,8 +93,8 @@ export function GlobalPlayer() {
       {/* Barra do Player Persistente */}
       <aside aria-label="Audio Player" className="fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/95 border-t border-zinc-800/80 backdrop-blur-xl shadow-2xl text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-          {/* Lado Esquerdo: Info da Faixa */}
-          <div className="flex items-center gap-3.5 min-w-[180px] sm:min-w-[240px] max-w-[30%]">
+          {/* Lado Esquerdo: Info da Faixa + Botão de Curtir */}
+          <div className="flex items-center gap-3 min-w-[180px] sm:min-w-[240px] max-w-[30%]">
             <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-zinc-900 border border-zinc-800 flex-shrink-0">
               {currentTrack.coverUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -107,7 +110,7 @@ export function GlobalPlayer() {
               )}
             </div>
 
-            <div className="truncate">
+            <div className="truncate min-w-0 flex-1">
               <Link
                 href={`/track/${currentTrack.id}`}
                 className="font-medium text-sm text-zinc-100 hover:text-amber-400 truncate block transition-colors"
@@ -121,6 +124,16 @@ export function GlobalPlayer() {
                 {currentTrack.artistName}
               </Link>
             </div>
+
+            <button
+              onClick={toggleCurrentLike}
+              className={`p-1.5 rounded-lg transition-colors flex-shrink-0 ${
+                isCurrentLiked ? 'text-rose-500' : 'text-zinc-500 hover:text-rose-400'
+              }`}
+              title={isCurrentLiked ? 'Descurtir' : 'Curtir'}
+            >
+              <Heart className={`w-4 h-4 ${isCurrentLiked ? 'fill-current' : ''}`} />
+            </button>
           </div>
 
           {/* Centro: Controles e Barra de Progresso */}

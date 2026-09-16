@@ -213,6 +213,114 @@ export type Database = {
         };
         Relationships: [];
       };
+      playlists: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          description: string | null;
+          cover_url: string | null;
+          is_public: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          description?: string | null;
+          cover_url?: string | null;
+          is_public?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          title?: string;
+          description?: string | null;
+          cover_url?: string | null;
+          is_public?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      playlist_tracks: {
+        Row: {
+          id: string;
+          playlist_id: string;
+          track_id: string;
+          position: number;
+          added_at: string;
+        };
+        Insert: {
+          id?: string;
+          playlist_id: string;
+          track_id: string;
+          position?: number;
+          added_at?: string;
+        };
+        Update: {
+          playlist_id?: string;
+          track_id?: string;
+          position?: number;
+        };
+        Relationships: [];
+      };
+      likes: {
+        Row: {
+          user_id: string;
+          track_id: string;
+          created_at: string;
+        };
+        Insert: {
+          user_id: string;
+          track_id: string;
+          created_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          track_id?: string;
+        };
+        Relationships: [];
+      };
+      follows: {
+        Row: {
+          fan_id: string;
+          artist_id: string;
+          created_at: string;
+        };
+        Insert: {
+          fan_id: string;
+          artist_id: string;
+          created_at?: string;
+        };
+        Update: {
+          fan_id?: string;
+          artist_id?: string;
+        };
+        Relationships: [];
+      };
+      plays: {
+        Row: {
+          id: string;
+          track_id: string;
+          user_id: string | null;
+          duration_played_seconds: number;
+          played_at: string;
+        };
+        Insert: {
+          id?: string;
+          track_id: string;
+          user_id?: string | null;
+          duration_played_seconds?: number;
+          played_at?: string;
+        };
+        Update: {
+          track_id?: string;
+          user_id?: string | null;
+          duration_played_seconds?: number;
+        };
+        Relationships: [];
+      };
       genres: {
         Row: {
           id: string;

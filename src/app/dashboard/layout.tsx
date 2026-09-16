@@ -13,6 +13,9 @@ import {
   Heart,
   Radio,
   UserCheck,
+  ListMusic,
+  Users,
+  Compass,
 } from 'lucide-react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -32,8 +35,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       ]
     : [
         { href: '/dashboard', label: 'Meu Feed', icon: LayoutDashboard },
-        { href: '/explore', label: 'Descobrir Músicas', icon: Music2 },
-        { href: '/artists', label: 'Artistas que Sigo', icon: Heart },
+        { href: '/dashboard/favorites', label: 'Músicas Curtidas', icon: Heart },
+        { href: '/dashboard/playlists', label: 'Minhas Playlists', icon: ListMusic },
+        { href: '/dashboard/following', label: 'Artistas que Sigo', icon: Users },
+        { href: '/explore', label: 'Descobrir Músicas', icon: Compass },
       ];
 
   return (
