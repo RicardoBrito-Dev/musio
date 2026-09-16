@@ -12,6 +12,7 @@ import {
   DollarSign,
   Heart,
   Radio,
+  UserCheck,
 } from 'lucide-react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -27,6 +28,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { href: '/dashboard/artist/albums', label: 'Álbuns & EPs', icon: Disc3 },
         { href: '/dashboard/artist/analytics', label: 'Analytics & Plays', icon: BarChart3 },
         { href: '/dashboard/artist/earnings', label: 'Financeiro & Saques', icon: DollarSign },
+        { href: '/dashboard/artist/profile', label: 'Editar Perfil', icon: UserCheck },
       ]
     : [
         { href: '/dashboard', label: 'Meu Feed', icon: LayoutDashboard },

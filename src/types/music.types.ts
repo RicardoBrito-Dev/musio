@@ -1,4 +1,6 @@
-import { Database } from './database.types';
+import { Database, ReleaseType, UserRole } from './database.types';
+
+export type { ReleaseType, UserRole };
 
 export type Profile = Database['public']['Tables']['profiles']['Row'];
 export type Artist = Database['public']['Tables']['artists']['Row'];

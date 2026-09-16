@@ -14,7 +14,7 @@ export type PaymentMethod = 'pix' | 'credit_card' | 'wallet' | 'mock';
 export type PayoutStatus = 'pending' | 'processing' | 'completed' | 'rejected';
 export type ContentType = 'audio' | 'video' | 'stems' | 'post' | 'download';
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       profiles: {
@@ -47,6 +47,7 @@ export interface Database {
           bio?: string | null;
           updated_at?: string;
         };
+        Relationships: [];
       };
       artists: {
         Row: {
@@ -88,6 +89,7 @@ export interface Database {
           pix_key?: string | null;
           updated_at?: string;
         };
+        Relationships: [];
       };
       tracks: {
         Row: {
@@ -147,6 +149,7 @@ export interface Database {
           is_published?: boolean;
           updated_at?: string;
         };
+        Relationships: [];
       };
       albums: {
         Row: {
@@ -188,6 +191,27 @@ export interface Database {
           is_published?: boolean;
           updated_at?: string;
         };
+        Relationships: [];
+      };
+      album_tracks: {
+        Row: {
+          id: string;
+          album_id: string;
+          track_id: string;
+          track_number: number;
+        };
+        Insert: {
+          id?: string;
+          album_id: string;
+          track_id: string;
+          track_number?: number;
+        };
+        Update: {
+          album_id?: string;
+          track_id?: string;
+          track_number?: number;
+        };
+        Relationships: [];
       };
       genres: {
         Row: {
@@ -209,6 +233,7 @@ export interface Database {
           slug?: string;
           color?: string;
         };
+        Relationships: [];
       };
       orders: {
         Row: {
@@ -243,7 +268,26 @@ export interface Database {
           support_message?: string | null;
           updated_at?: string;
         };
+        Relationships: [];
       };
     };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
+    };
+    Enums: {
+      user_role: UserRole;
+      release_type: ReleaseType;
+      product_type: ProductType;
+      order_status: OrderStatus;
+      payment_method: PaymentMethod;
+      payout_status: PayoutStatus;
+      content_type: ContentType;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
-}
+};

@@ -1,5 +1,15 @@
 import { createClient } from '@/lib/supabase/client';
 import { ArtistWithDetails } from '@/types/music.types';
+import { Database } from '@/types/database.types';
+
+export interface UpdateArtistProfileDTO {
+  stageName?: string;
+  bio?: string;
+  avatarUrl?: string;
+  bannerUrl?: string;
+  pixKey?: string;
+  socialLinks?: Record<string, string>;
+}
 
 // Mock data para desenvolvimento local inicial quando Supabase não estiver conectado
 export const MOCK_ARTISTS: ArtistWithDetails[] = [
@@ -171,6 +181,42 @@ export const artistService = {
     } catch {
       const mock = MOCK_ARTISTS.find((a) => a.slug === slug);
       return mock || null;
+    }
+  },
+
+  async updateArtistProfile(artistId: string, dto: UpdateArtistProfileDTO): Promise<void> {
+    const supabase = createClient();
+
+    try {
+      const updatePayload: Database['public']['Tables']['artists']['Update'] = {};
+      if (dto.stageName !== undefined) updatePayload.stage_name = dto.stageName;
+      if (dto.bio !== undefined) updatePayload.bio = dto.bio;
+      if (dto.avatarUrl !== undefined) updatePayload.avatar_url = dto.avatarUrl;
+      if (dto.bannerUrl !== undefined) updatePayload.banner_url = dto.bannerUrl;
+      if (dto.pixKey !== undefined) updatePayload.pix_key = dto.pixKey;
+      if (dto.socialLinks !== undefined) updatePayload.social_links = dto.socialLinks;
+
+      const { error } = await supabase
+        .from('artists')
+        .update(updatePayload)
+        .eq('id', artistId);
+
+      if (error) {
+        console.warn('Erro ao atualizar artista no Supabase (atualizando local):', error.message);
+      }
+    } catch (err) {
+      console.warn('Erro na chamada updateArtistProfile:', err);
+    }
+
+    // Atualiza o registro em memória no mock
+    const target = MOCK_ARTISTS.find((a) => a.id === artistId) || MOCK_ARTISTS[0];
+    if (target) {
+      if (dto.stageName) target.stage_name = dto.stageName;
+      if (dto.bio) target.bio = dto.bio;
+      if (dto.avatarUrl) target.avatar_url = dto.avatarUrl;
+      if (dto.bannerUrl) target.banner_url = dto.bannerUrl;
+      if (dto.pixKey) target.pix_key = dto.pixKey;
+      if (dto.socialLinks) target.social_links = { ...target.social_links, ...dto.socialLinks };
     }
   },
 };
