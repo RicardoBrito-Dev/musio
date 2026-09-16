@@ -167,7 +167,7 @@ Abra no navegador em **[http://localhost:3000](http://localhost:3000)**.
 
 - [x] **Fase 1**: Fundação Sólida (Next.js, Tailwind, Supabase, RLS, Autenticação, Player Global, Telas Iniciais).
 - [x] **Fase 2**: Artistas (Upload real no Supabase Storage, gestão de mídias e edição de perfil).
-- [ ] **Fase 3**: Fãs & Catálogo (Playlists personalizadas, curtidas persistentes e histórico de reproduções).
+- [x] **Fase 3**: Fãs & Catálogo (Playlists personalizadas, curtidas persistentes e histórico de reproduções).
 - [ ] **Fase 4**: Monetização (Integração de gateway de pagamento brasileiro real para Pix e cartão).
 - [ ] **Fase 5**: Marketplace & Clube (Venda de Stems/Beat Packs e assinaturas recorrentes do Clube do Artista).
 - [ ] **Fase 6**: Aplicativo Mobile (React Native + Expo compartilhando o mesmo backend).
