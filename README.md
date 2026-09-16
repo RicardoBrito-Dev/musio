@@ -166,7 +166,7 @@ Abra no navegador em **[http://localhost:3000](http://localhost:3000)**.
 ## 🗺️ Roadmap de Desenvolvimento
 
 - [x] **Fase 1**: Fundação Sólida (Next.js, Tailwind, Supabase, RLS, Autenticação, Player Global, Telas Iniciais).
-- [ ] **Fase 2**: Artistas (Upload real no Supabase Storage, gestão de mídias e edição de perfil).
+- [x] **Fase 2**: Artistas (Upload real no Supabase Storage, gestão de mídias e edição de perfil).
 - [ ] **Fase 3**: Fãs & Catálogo (Playlists personalizadas, curtidas persistentes e histórico de reproduções).
 - [ ] **Fase 4**: Monetização (Integração de gateway de pagamento brasileiro real para Pix e cartão).
 - [ ] **Fase 5**: Marketplace & Clube (Venda de Stems/Beat Packs e assinaturas recorrentes do Clube do Artista).
